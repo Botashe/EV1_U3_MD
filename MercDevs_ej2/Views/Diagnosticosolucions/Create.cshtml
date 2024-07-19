@@ -1,0 +1,41 @@
+﻿@model MercDevs_ej2.Models.Diagnosticosolucion
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Crear Diagnostico-Solucion</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="DescripcionDiagnostico" class="control-label">Descripcion</label>
+                <input asp-for="DescripcionDiagnostico" class="form-control" />
+                <span asp-validation-for="DescripcionDiagnostico" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DescripcionSolucion" class="control-label">Solucion</label>
+                <input asp-for="DescripcionSolucion" class="form-control" />
+                <span asp-validation-for="DescripcionSolucion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DatosFichaTecnicaId" class="control-label">Id Ficha Tecnica</label>
+                <select asp-for="DatosFichaTecnicaId" class ="form-control" asp-items="ViewBag.DatosFichaTecnicaId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Crear Diagnostico-Solucion" class="btn btn-success" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index"><button class="btn btn-outline-secondary">Volver a la Lista</button></a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
