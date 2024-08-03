@@ -26,15 +26,16 @@ namespace MercDevs_ej2.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var recepciones = await _context.Recepcionequipos
-                .Include(r => r.IdClienteNavigation)
-                .Include(r => r.IdServicioNavigation)
-                .Where(r => r.Estado != "Finalizar")
+            // Filtra las fichas técnicas con estado 1 (activo)
+            var datosFichaTecnicaActivos = await _context.Datosfichatecnicas
+                .Where(d => d.Estado == 1)  // Asegúrate de que el valor 1 es correcto para el estado activo
+                .Include(d => d.RecepcionEquipo)  // Incluye la relación si es necesario para la vista
+                .ThenInclude(r => r.IdClienteNavigation)  // Incluye el cliente si lo necesitas en la vista
                 .ToListAsync();
 
-
-            return View(recepciones);
+            return View(datosFichaTecnicaActivos);
         }
+
 
         public IActionResult Privacy()
         {

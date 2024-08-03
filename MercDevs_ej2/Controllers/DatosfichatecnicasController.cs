@@ -123,22 +123,59 @@ namespace MercDevs_ej2.Controllers
         }
 
         // POST: Datosfichatecnicas/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int? id,[Bind("IdDatosFichaTecnica,FechaInicio,FechaFinalizacion,PobservacionesRecomendaciones,Soinstalado,SuiteOfficeInstalada,LectorPdfinstalado,NavegadorWebInstalado,AntivirusInstalado,RecepcionEquipoId")] Datosfichatecnica datosfichatecnica)
+        public async Task<IActionResult> Create([Bind("IdDatosFichaTecnica,FechaInicio,FechaFinalizacion,PobservacionesRecomendaciones,Soinstalado,SuiteOfficeInstalada,LectorPdfinstalado,NavegadorWebInstalado,AntivirusInstalado,Estado,RecepcionEquipoId")] Datosfichatecnica datosfichatecnica)
         {
-            if (datosfichatecnica.FechaInicio != null)
+            // Validación manual
+            bool isValid = true;
+
+            if (datosfichatecnica.FechaInicio == null)
             {
-                datosfichatecnica.RecepcionEquipoId = Convert.ToInt32(id);
+                ModelState.AddModelError("FechaInicio", "La fecha de inicio es obligatoria.");
+                isValid = false;
+            }
+
+            if (datosfichatecnica.FechaFinalizacion == null)
+            {
+                ModelState.AddModelError("FechaFinalizacion", "La fecha de finalización es obligatoria.");
+                isValid = false;
+            }
+
+            // Verificar que el RecepcionEquipoId existe en la base de datos
+            if (datosfichatecnica.RecepcionEquipoId <= 0 || !_context.Recepcionequipos.Any(r => r.Id == datosfichatecnica.RecepcionEquipoId))
+            {
+                ModelState.AddModelError("RecepcionEquipoId", "El ID de Recepción de Equipo no es válido.");
+                isValid = false;
+            }
+
+            if (!isValid)
+            {
+                // Cargar la lista para el campo RecepcionEquipoId en la vista en caso de error
+                ViewData["RecepcionEquipoId"] = new SelectList(_context.Recepcionequipos, "Id", "Id", datosfichatecnica.RecepcionEquipoId);
+                return View(datosfichatecnica);
+            }
+
+            try
+            {
+                // Agregar datos a la base de datos
                 _context.Add(datosfichatecnica);
                 await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Recepcionequipoes");
             }
-            ViewData["RecepcionEquipoId"] = new SelectList(_context.Recepcionequipos, "Id", "Id", datosfichatecnica.RecepcionEquipoId);
-            return View(datosfichatecnica);
+            catch (DbUpdateException ex)
+            {
+                // Manejo de excepción para errores de base de datos
+                ModelState.AddModelError("", "Error al guardar los datos: " + ex.Message);
+                ViewData["RecepcionEquipoId"] = new SelectList(_context.Recepcionequipos, "Id", "Id", datosfichatecnica.RecepcionEquipoId);
+                return View(datosfichatecnica);
+            }
+
+            // Redirigir a la acción Index en el controlador Recepcionequipoes
+            return RedirectToAction("Index", "Recepcionequipoes");
         }
+
+
+
 
         // GET: Datosfichatecnicas/Edit/5
         public async Task<IActionResult> Edit(int? id)
