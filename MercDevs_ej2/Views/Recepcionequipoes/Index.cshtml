@@ -47,11 +47,33 @@
             </td>
             <td style="white-space: nowrap;">
                 @Html.DisplayFor(modelItem => item.Fecha)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TipoPc)
-            </td>
-            <td>
+                    <td>
+                            @{
+                                var tipoPcValue = item.TipoPc;
+                                string tipoEquipo;
+
+                            <span>Valor de TipoPc: @tipoPcValue</span>
+
+                                <br />
+
+                                switch (tipoPcValue)
+                                {
+                                    case 0:
+                                        tipoEquipo = "PC Torre";
+                                        break;
+                                    case 1:
+                                        tipoEquipo = "Notebook";
+                                        break;
+                                    case 2:
+                                        tipoEquipo = "All-In-One";
+                                        break;
+                                    default:
+                                        tipoEquipo = "Desconocido";
+                                        break;
+                                }
+                            <span>@tipoEquipo</span>
+                            }
+                    </td>
                 @Html.DisplayFor(modelItem => item.MarcaPc)
             </td>
             <td>
